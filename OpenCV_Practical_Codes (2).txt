@@ -1,0 +1,201 @@
+OPEN CV PRACTICALS - PYTHON CODES
+Academic Booklet 2026-27
+
+Note:
+1. Install required libraries using: pip install opencv-python numpy matplotlib
+2. Keep image.jpg in the same folder as the Python file.
+3. Practical 7 also requires image2.jpg.
+4. Practical 10 uses the webcam. Press Q to stop.
+5. These examples use cv2.imshow(), which works in local Python environments.
+
+============================================================
+PRACTICAL 1: IMAGE READING, DISPLAY, SAVING AND BASIC OPERATIONS
+============================================================
+import cv2
+
+img = cv2.imread('image.jpg')
+cv2.imshow('Original', img)
+cv2.imwrite('saved.jpg', img)
+print(img.shape)
+
+cv2.imshow('Resize', cv2.resize(img, (300, 300)))
+cv2.imshow('Crop', img[50:200, 50:200])
+cv2.imshow('Rotate', cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE))
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+============================================================
+PRACTICAL 2: COLOR SPACE CONVERSION (BGR, RGB, GRAYSCALE AND HSV)
+============================================================
+import cv2
+
+img = cv2.imread('image.jpg')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+cv2.imshow('Gray', gray)
+cv2.imshow('RGB', rgb)
+cv2.imshow('HSV', hsv)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+============================================================
+PRACTICAL 3: IMAGE ENHANCEMENT - BRIGHTNESS, CONTRAST AND SMOOTHING
+============================================================
+import cv2
+
+img = cv2.imread('image.jpg')
+bright = cv2.convertScaleAbs(img, alpha=1.5, beta=50)
+gaussian = cv2.GaussianBlur(img, (5, 5), 0)
+median = cv2.medianBlur(img, 5)
+
+cv2.imshow('Brightness and Contrast', bright)
+cv2.imshow('Gaussian Blur', gaussian)
+cv2.imshow('Median Blur', median)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+============================================================
+PRACTICAL 4: HISTOGRAM PLOTTING AND HISTOGRAM EQUALIZATION
+============================================================
+import cv2
+import matplotlib.pyplot as plt
+
+img = cv2.imread('image.jpg', 0)
+eq = cv2.equalizeHist(img)
+
+plt.hist(img.ravel(), 256, [0, 256])
+plt.title('Image Histogram')
+plt.xlabel('Pixel Intensity')
+plt.ylabel('Frequency')
+plt.show()
+
+cv2.imshow('Histogram Equalization', eq)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+============================================================
+PRACTICAL 5: EDGE DETECTION USING SOBEL AND CANNY
+============================================================
+import cv2
+
+img = cv2.imread('image.jpg', 0)
+sobel = cv2.Sobel(img, cv2.CV_64F, 1, 0, ksize=3)
+canny = cv2.Canny(img, 100, 200)
+
+cv2.imshow('Sobel', cv2.convertScaleAbs(sobel))
+cv2.imshow('Canny', canny)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+============================================================
+PRACTICAL 6: CORNER DETECTION USING HARRIS CORNER DETECTOR
+============================================================
+import cv2
+import numpy as np
+
+img = cv2.imread('image.jpg')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+dst = cv2.cornerHarris(np.float32(gray), 2, 3, 0.04)
+img[dst > 0.01 * dst.max()] = [0, 0, 255]
+
+cv2.imshow('Harris Corners', img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+============================================================
+PRACTICAL 7: FEATURE DETECTION AND MATCHING USING ORB
+============================================================
+import cv2
+
+a = cv2.imread('image.jpg', 0)
+b = cv2.imread('image2.jpg', 0)
+
+orb = cv2.ORB_create()
+k1, d1 = orb.detectAndCompute(a, None)
+k2, d2 = orb.detectAndCompute(b, None)
+
+matches = cv2.BFMatcher(cv2.NORM_HAMMING, True).match(d1, d2)
+out = cv2.drawMatches(a, k1, b, k2, matches, None)
+
+cv2.imshow('ORB Feature Matching', out)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+============================================================
+PRACTICAL 8: IMAGE SEGMENTATION USING THRESHOLDING AND K-MEANS
+============================================================
+import cv2
+import numpy as np
+
+img = cv2.imread('image.jpg')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+_, binary = cv2.threshold(gray, 127, 255, cv2.THRESH_BINARY)
+adaptive = cv2.adaptiveThreshold(
+    gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+    cv2.THRESH_BINARY, 11, 2
+)
+
+Z = np.float32(img.reshape((-1, 3)))
+criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10, 1.0)
+_, labels, centers = cv2.kmeans(
+    Z, 3, None, criteria, 3, cv2.KMEANS_RANDOM_CENTERS
+)
+seg = np.uint8(centers[labels.flatten()].reshape(img.shape))
+
+cv2.imshow('Binary Threshold', binary)
+cv2.imshow('Adaptive Threshold', adaptive)
+cv2.imshow('K-Means Segmentation', seg)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+============================================================
+PRACTICAL 9: FACE DETECTION USING HAAR CASCADE CLASSIFIER
+============================================================
+import cv2
+
+img = cv2.imread('image.jpg')
+gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+face = cv2.CascadeClassifier(
+    cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+)
+
+for x, y, w, h in face.detectMultiScale(gray, 1.1, 5):
+    cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+cv2.imshow('Face Detection', img)
+cv2.waitKey(0)
+cv2.destroyAllWindows()
+
+
+============================================================
+PRACTICAL 10: MOTION DETECTION USING BACKGROUND SUBTRACTION
+============================================================
+import cv2
+
+cap = cv2.VideoCapture(0)
+bg = cv2.createBackgroundSubtractorMOG2()
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    mask = bg.apply(frame)
+    cv2.imshow('Motion Detection', mask)
+
+    if cv2.waitKey(30) & 0xFF == ord('q'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
