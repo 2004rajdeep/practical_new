@@ -1,0 +1,1082 @@
+    OPEN SOURCE SOFTWARE AND TOOLS (PRACTICAL)
+    BCA (Hons), Semester 7
+    PRACTICALS 1–8: LARAVEL COMMANDS AND CODE
+    Prepared for the existing Windows/XAMPP setup described in the study session.
+
+    IMPORTANT
+    - Existing working project: C:\xampp\htdocs\auth-demo
+    - Laravel version used: 12.x
+    - PHP: 8.2.x
+    - Existing database: auth_demo
+    - Local app URL used in practice: http://127.0.0.1:8010
+    - Do not run create-project commands again inside the existing project.
+    - Run Artisan commands from the project root, where artisan is located.
+    - Use npm.cmd in PowerShell if npm is blocked by execution policy.
+    - These are practical notes based on the lab manual and the working code developed in this session. Practical 8 was implemented inside auth-demo rather than creating a second task-manager project.
+
+    ============================================================
+    PRACTICAL 1: INSTALL LARAVEL AND RUN A PROJECT
+    ============================================================
+
+    Aim:
+    Install Laravel using Composer and run the Laravel welcome page.
+
+    Check tools:
+    php -v
+    composer --version
+    node -v
+    npm.cmd -v
+
+    Move to XAMPP htdocs:
+    cd C:\xampp\htdocs
+
+    Create a new project ONLY if you need a fresh project:
+    composer create-project laravel/laravel myapp
+
+    Move into project:
+    cd C:\xampp\htdocs\myapp
+
+    Start server:
+    php artisan serve
+
+    Open:
+    http://127.0.0.1:8000
+
+    Useful commands:
+    php artisan --version
+    php artisan list
+    php artisan route:list
+
+    For the project used in later practicals, use:
+    cd C:\xampp\htdocs\auth-demo
+
+    ============================================================
+    PRACTICAL 2: LARAVEL AUTHENTICATION WITH BREEZE
+    ============================================================
+
+    Aim:
+    Configure registration, login and logout.
+
+    For a new project, the manual commands are:
+    composer create-project laravel/laravel auth-demo
+    cd auth-demo
+    composer require laravel/breeze --dev
+    php artisan breeze:install blade
+    npm install
+    npm run build
+    php artisan migrate
+
+    In this session, auth-demo and Breeze are ALREADY installed. Do not repeat the installation commands.
+
+    Database settings in .env for this session:
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=auth_demo
+    DB_USERNAME=root
+    DB_PASSWORD=
+
+    Create database auth_demo using XAMPP phpMyAdmin if setting up a fresh copy.
+    After changing .env, run:
+    php artisan config:clear
+    php artisan migrate
+
+    Start server on the port used in this session:
+    php artisan serve --port=8010
+
+    Open:
+    http://127.0.0.1:8010/register
+    http://127.0.0.1:8010/login
+    http://127.0.0.1:8010/dashboard
+
+    If npm is blocked in PowerShell, use:
+    npm.cmd install
+    npm.cmd run build
+
+    ============================================================
+    PRACTICAL 3: ROUTES AND VIEWS (HOME, ABOUT, CONTACT)
+    ============================================================
+
+    Aim:
+    Create routes and Blade views for Home, About and Contact.
+
+    File: routes/web.php
+    Add or ensure these routes exist. Do not add duplicate routes if already present.
+
+    <?php
+
+    use Illuminate\Support\Facades\Route;
+
+    Route::get('/', function () {
+        return view('home');
+    })->name('home');
+
+    Route::get('/about', function () {
+        return view('about');
+    })->name('about');
+
+    Route::get('/contact', function () {
+        return view('contact');
+    })->name('contact');
+
+    Create these files:
+    resources/views/home.blade.php
+    resources/views/about.blade.php
+    resources/views/contact.blade.php
+
+    resources/views/home.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'Home')
+    @section('content')
+    <h1>Welcome to My Laravel Website</h1>
+    <p>This is the home page.</p>
+    @endsection
+
+    resources/views/about.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'About')
+    @section('content')
+    <h1>About Us</h1>
+    <p>This page contains information about the website.</p>
+    @endsection
+
+    resources/views/contact.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'Contact')
+    @section('content')
+    <h1>Contact Us</h1>
+    <p>Email: example@example.com</p>
+    @endsection
+
+    Check routes:
+    php artisan route:list
+
+    Open:
+    http://127.0.0.1:8010/
+    http://127.0.0.1:8010/about
+    http://127.0.0.1:8010/contact
+
+    ============================================================
+    PRACTICAL 4: CREATE A SHARED BLADE LAYOUT
+    ============================================================
+
+    Aim:
+    Use one common layout for multiple views.
+
+    Create file:
+    resources/views/layouts/practical.blade.php
+
+    Code:
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>@yield('title', 'My Laravel Website')</title>
+    </head>
+    <body>
+        <header>
+            <h1>My Laravel Website</h1>
+            <nav>
+                <a href="{{ route('home') }}">Home</a> |
+                <a href="{{ route('about') }}">About</a> |
+                <a href="{{ route('contact') }}">Contact</a> |
+                <a href="{{ route('posts.index') }}">Posts</a> |
+                <a href="{{ route('tasks.index') }}">Tasks</a>
+            </nav>
+            <hr>
+        </header>
+
+        <main>
+            @yield('content')
+        </main>
+
+        <footer>
+            <hr>
+            <p>Laravel Practical Work</p>
+        </footer>
+    </body>
+    </html>
+
+    IMPORTANT:
+    Use @extends('layouts.practical') in these ordinary Blade pages.
+    Do not use layouts/app.blade.php with @extends in this setup because the Breeze layout uses a component slot and previously caused an Undefined variable $slot error.
+
+    ============================================================
+    PRACTICAL 5: PASS DATA FROM ROUTE TO VIEW
+    ============================================================
+
+    Aim:
+    Pass variables and an array from a route to a Blade view.
+
+    In routes/web.php:
+    Route::get('/profile-demo', function () {
+        $name = 'John Doe';
+        $age = 22;
+        $skills = ['PHP', 'Laravel', 'MySQL'];
+
+        return view('profile-demo', compact('name', 'age', 'skills'));
+    });
+
+    Create:
+    resources/views/profile-demo.blade.php
+
+    Code:
+    @extends('layouts.practical')
+    @section('title', 'Profile Demo')
+    @section('content')
+    <h2>Profile</h2>
+    <p>Name: {{ $name }}</p>
+    <p>Age: {{ $age }}</p>
+
+    <h3>Skills</h3>
+    <ul>
+        @foreach ($skills as $skill)
+            <li>{{ $skill }}</li>
+        @endforeach
+    </ul>
+    @endsection
+
+    Open:
+    http://127.0.0.1:8010/profile-demo
+
+    ============================================================
+    PRACTICAL 6: DATABASE MIGRATIONS
+    ============================================================
+
+    Aim:
+    Create database tables with Laravel migrations.
+
+    For a fresh database setup, configure .env:
+    DB_CONNECTION=mysql
+    DB_HOST=127.0.0.1
+    DB_PORT=3306
+    DB_DATABASE=auth_demo
+    DB_USERNAME=root
+    DB_PASSWORD=
+
+    Create a migration for posts ONLY if it does not already exist:
+    php artisan make:migration create_posts_table
+
+    Example posts migration schema:
+    use Illuminate\Database\Migrations\Migration;
+    use Illuminate\Database\Schema\Blueprint;
+    use Illuminate\Support\Facades\Schema;
+
+    return new class extends Migration {
+        public function up(): void
+        {
+            Schema::create('posts', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
+                $table->string('title');
+                $table->text('content');
+                $table->string('status')->default('draft');
+                $table->timestamps();
+            });
+        }
+
+        public function down(): void
+        {
+            Schema::dropIfExists('posts');
+        }
+    };
+
+    Run/check migrations:
+    php artisan migrate:status
+    php artisan migrate
+
+    IMPORTANT FOR THIS EXISTING PROJECT:
+    The posts table already exists and is used by Practical 7. Do not create a second create_posts_table migration or rerun a duplicate migration. The existing posts table in this project has id, title, content, timestamps, and status. It may not have user_id, because the table was created and adjusted during the practical. Keep your current working schema unless deliberately rebuilding the database.
+
+    ============================================================
+    PRACTICAL 7: POSTS CRUD (CREATE, READ, UPDATE, DELETE)
+    ============================================================
+
+    Aim:
+    Build a Posts CRUD module.
+
+    Commands used:
+    php artisan make:model Post
+    php artisan make:controller PostController --resource
+    php artisan route:list --path=posts
+
+    MODEL: app/Models/Post.php
+    <?php
+
+    namespace App\Models;
+
+    use Illuminate\Database\Eloquent\Model;
+
+    class Post extends Model
+    {
+        protected $fillable = [
+            'title',
+            'content',
+            'status',
+        ];
+    }
+
+    CONTROLLER: app/Http/Controllers/PostController.php
+    <?php
+
+    namespace App\Http\Controllers;
+
+    use App\Models\Post;
+    use Illuminate\Http\Request;
+
+    class PostController extends Controller
+    {
+        public function index()
+        {
+            $posts = Post::latest()->get();
+            return view('posts.index', compact('posts'));
+        }
+
+        public function create()
+        {
+            return view('posts.create');
+        }
+
+        public function store(Request $request)
+        {
+            $validated = $request->validate([
+                'title' => 'required|max:255',
+                'content' => 'required|string',
+                'status' => 'required|in:draft,published',
+            ]);
+
+            Post::create($validated);
+            return redirect()->route('posts.index')->with('success', 'Post created successfully!');
+        }
+
+        public function show(Post $post)
+        {
+            return view('posts.show', compact('post'));
+        }
+
+        public function edit(Post $post)
+        {
+            return view('posts.edit', compact('post'));
+        }
+
+        public function update(Request $request, Post $post)
+        {
+            $validated = $request->validate([
+                'title' => 'required|max:255',
+                'content' => 'required|string',
+                'status' => 'required|in:draft,published',
+            ]);
+
+            $post->update($validated);
+            return redirect()->route('posts.index')->with('success', 'Post updated successfully!');
+        }
+
+        public function destroy(Post $post)
+        {
+            $post->delete();
+            return redirect()->route('posts.index')->with('success', 'Post deleted successfully!');
+        }
+    }
+
+    ROUTE in routes/web.php:
+    use App\Http\Controllers\PostController;
+    Route::resource('posts', PostController::class);
+
+    Create folder:
+    resources/views/posts
+
+    resources/views/posts/index.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'Posts')
+    @section('content')
+    <h2>Posts</h2>
+    @if(session('success')) <p>{{ session('success') }}</p> @endif
+    <p><a href="{{ route('posts.create') }}">Create Post</a></p>
+    @forelse($posts as $post)
+        <article>
+            <h3>{{ $post->title }}</h3>
+            <p>{{ $post->content }}</p>
+            <p>Status: {{ $post->status }}</p>
+            <a href="{{ route('posts.show', $post) }}">View</a>
+            <a href="{{ route('posts.edit', $post) }}">Edit</a>
+            <form action="{{ route('posts.destroy', $post) }}" method="POST" style="display:inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit">Delete</button>
+            </form>
+            <hr>
+        </article>
+    @empty
+        <p>No posts found.</p>
+    @endforelse
+    @endsection
+
+    resources/views/posts/create.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'Create Post')
+    @section('content')
+    <h2>Create Post</h2>
+    @if($errors->any())
+        @foreach($errors->all() as $error) <p style="color:red">{{ $error }}</p> @endforeach
+    @endif
+    <form action="{{ route('posts.store') }}" method="POST">
+        @csrf
+        <p>Title: <input name="title" value="{{ old('title') }}" required></p>
+        <p>Content: <textarea name="content" required>{{ old('content') }}</textarea></p>
+        <p>Status:
+            <select name="status">
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+            </select>
+        </p>
+        <button type="submit">Save Post</button>
+    </form>
+    @endsection
+
+    resources/views/posts/edit.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'Edit Post')
+    @section('content')
+    <h2>Edit Post</h2>
+    <form action="{{ route('posts.update', $post) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <p>Title: <input name="title" value="{{ old('title', $post->title) }}" required></p>
+        <p>Content: <textarea name="content" required>{{ old('content', $post->content) }}</textarea></p>
+        <p>Status:
+            <select name="status">
+                <option value="draft" {{ $post->status === 'draft' ? 'selected' : '' }}>Draft</option>
+                <option value="published" {{ $post->status === 'published' ? 'selected' : '' }}>Published</option>
+            </select>
+        </p>
+        <button type="submit">Update Post</button>
+    </form>
+    @endsection
+
+    resources/views/posts/show.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'Post Details')
+    @section('content')
+    <h2>{{ $post->title }}</h2>
+    <p>{{ $post->content }}</p>
+    <p>Status: {{ $post->status }}</p>
+    <a href="{{ route('posts.index') }}">Back to Posts</a>
+    @endsection
+
+    Test:
+    http://127.0.0.1:8010/posts
+
+    NOTE:
+    If your current working PostController or view code differs, keep the version that already works. If the posts table uses a different schema, make the model/controller match its actual columns. Do not delete the database.
+
+    ============================================================
+    PRACTICAL 8: STUDENT TASK MANAGER USING LARAVEL
+    ============================================================
+
+    Aim:
+    Build a task manager with authentication and CRUD.
+    In this session, this was added to the existing auth-demo project.
+
+    Commands:
+    cd C:\xampp\htdocs\auth-demo
+    php artisan make:model Task -mcr
+    php artisan migrate
+    php artisan route:list --path=tasks
+    php artisan optimize:clear
+
+    MIGRATION: database/migrations/*_create_tasks_table.php
+    The actual migration used in this session:
+    Schema::create('tasks', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        $table->string('title');
+        $table->text('description')->nullable();
+        $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
+        $table->boolean('completed')->default(false);
+        $table->timestamps();
+    });
+
+    MODEL: app/Models/Task.php
+    <?php
+
+    namespace App\Models;
+
+    use Illuminate\Database\Eloquent\Model;
+    use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
+    class Task extends Model
+    {
+        protected $fillable = [
+            'title',
+            'description',
+            'priority',
+            'completed',
+        ];
+
+        protected function casts(): array
+        {
+            return ['completed' => 'boolean'];
+        }
+
+        public function user(): BelongsTo
+        {
+            return $this->belongsTo(User::class);
+        }
+    }
+
+    USER MODEL: add this method inside the existing app/Models/User.php class:
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    Do not replace the entire User.php file. Add the method inside the existing User class, before its final closing brace.
+
+    CONTROLLER: app/Http/Controllers/TaskController.php
+    <?php
+
+    namespace App\Http\Controllers;
+
+    use App\Models\Task;
+    use Illuminate\Http\Request;
+
+    class TaskController extends Controller
+    {
+        public function index()
+        {
+            $tasks = auth()->user()->tasks()->latest()->get();
+            return view('tasks.index', compact('tasks'));
+        }
+
+        public function create()
+        {
+            return view('tasks.create');
+        }
+
+        public function store(Request $request)
+        {
+            $validated = $request->validate([
+                'title' => 'required|max:255',
+                'description' => 'nullable|string',
+                'priority' => 'required|in:low,medium,high',
+            ]);
+
+            auth()->user()->tasks()->create($validated);
+            return redirect()->route('tasks.index')->with('success', 'Task created successfully!');
+        }
+
+        public function show(Task $task)
+        {
+            $this->authorizeTask($task);
+            return view('tasks.show', compact('task'));
+        }
+
+        public function edit(Task $task)
+        {
+            $this->authorizeTask($task);
+            return view('tasks.edit', compact('task'));
+        }
+
+        public function update(Request $request, Task $task)
+        {
+            $this->authorizeTask($task);
+
+            $validated = $request->validate([
+                'title' => 'required|max:255',
+                'description' => 'nullable|string',
+                'priority' => 'required|in:low,medium,high',
+                'completed' => 'sometimes|boolean',
+            ]);
+
+            $validated['completed'] = $request->boolean('completed');
+            $task->update($validated);
+
+            return redirect()->route('tasks.index')->with('success', 'Task updated successfully!');
+        }
+
+        public function destroy(Task $task)
+        {
+            $this->authorizeTask($task);
+            $task->delete();
+            return redirect()->route('tasks.index')->with('success', 'Task deleted successfully!');
+        }
+
+        private function authorizeTask(Task $task): void
+        {
+            abort_unless($task->user_id === auth()->id(), 403);
+        }
+    }
+
+    ROUTE in routes/web.php:
+    use App\Http\Controllers\TaskController;
+
+    Inside the existing auth middleware group:
+    Route::resource('tasks', TaskController::class);
+
+    Do not add a second copy if this route already exists.
+
+    Create folder:
+    resources/views/tasks
+
+    resources/views/tasks/index.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'My Tasks')
+    @section('content')
+    <h2>Student Task Manager</h2>
+    <p><a href="{{ route('tasks.create') }}">+ Create New Task</a></p>
+    @if(session('success')) <p style="color:green">{{ session('success') }}</p> @endif
+    @if($tasks->isEmpty())
+        <p>No tasks yet. Create your first task!</p>
+    @else
+    <table border="1" cellpadding="8">
+        <tr><th>Title</th><th>Priority</th><th>Status</th><th>Actions</th></tr>
+        @foreach($tasks as $task)
+        <tr>
+            <td>{{ $task->title }}</td>
+            <td>{{ ucfirst($task->priority) }}</td>
+            <td>{{ $task->completed ? 'Completed' : 'Pending' }}</td>
+            <td>
+                <a href="{{ route('tasks.show', $task) }}">View</a>
+                <a href="{{ route('tasks.edit', $task) }}">Edit</a>
+                <form action="{{ route('tasks.destroy', $task) }}" method="POST" style="display:inline">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" onclick="return confirm('Delete this task?')">Delete</button>
+                </form>
+            </td>
+        </tr>
+        @endforeach
+    </table>
+    @endif
+    @endsection
+
+    resources/views/tasks/create.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'Create Task')
+    @section('content')
+    <h2>Create a Task</h2>
+    @if($errors->any())
+        @foreach($errors->all() as $error) <p style="color:red">{{ $error }}</p> @endforeach
+    @endif
+    <form action="{{ route('tasks.store') }}" method="POST">
+        @csrf
+        <p>Title:<br><input type="text" name="title" value="{{ old('title') }}" required></p>
+        <p>Description:<br><textarea name="description">{{ old('description') }}</textarea></p>
+        <p>Priority:<br>
+            <select name="priority" required>
+                <option value="low">Low</option>
+                <option value="medium" selected>Medium</option>
+                <option value="high">High</option>
+            </select>
+        </p>
+        <button type="submit">Save Task</button>
+    </form>
+    <p><a href="{{ route('tasks.index') }}">Back to Tasks</a></p>
+    @endsection
+
+    resources/views/tasks/edit.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'Edit Task')
+    @section('content')
+    <h2>Edit Task</h2>
+    <form action="{{ route('tasks.update', $task) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <p>Title:<br><input type="text" name="title" value="{{ old('title', $task->title) }}" required></p>
+        <p>Description:<br><textarea name="description">{{ old('description', $task->description) }}</textarea></p>
+        <p>Priority:<br>
+            <select name="priority" required>
+                @foreach(['low','medium','high'] as $priority)
+                    <option value="{{ $priority }}" {{ old('priority', $task->priority) == $priority ? 'selected' : '' }}>{{ ucfirst($priority) }}</option>
+                @endforeach
+            </select>
+        </p>
+        <p><label><input type="checkbox" name="completed" value="1" {{ old('completed', $task->completed) ? 'checked' : '' }}> Task completed</label></p>
+        <button type="submit">Update Task</button>
+    </form>
+    <p><a href="{{ route('tasks.index') }}">Back to Tasks</a></p>
+    @endsection
+
+    resources/views/tasks/show.blade.php:
+    @extends('layouts.practical')
+    @section('title', 'Task Details')
+    @section('content')
+    <h2>Task Details</h2>
+    <p><strong>Title:</strong> {{ $task->title }}</p>
+    <p><strong>Description:</strong> {{ $task->description ?? 'No description' }}</p>
+    <p><strong>Priority:</strong> {{ ucfirst($task->priority) }}</p>
+    <p><strong>Status:</strong> {{ $task->completed ? 'Completed' : 'Pending' }}</p>
+    <p><a href="{{ route('tasks.edit', $task) }}">Edit Task</a></p>
+    <p><a href="{{ route('tasks.index') }}">Back to Tasks</a></p>
+    @endsection
+
+    Open:
+    http://127.0.0.1:8010/tasks
+    Login first if redirected to the login page.
+
+    ============================================================
+    USEFUL TROUBLESHOOTING
+    ============================================================
+
+    If you see "Cannot declare class App\Models\User, because the name is already in use":
+    - Open app/Models/Task.php.
+    - It must declare class Task, NOT class User.
+    - Ensure the file begins with <?php at the very first character (no text before it).
+    - Run:
+      php artisan optimize:clear
+
+    If a route is missing:
+    php artisan route:list
+    php artisan route:list --path=posts
+    php artisan route:list --path=tasks
+
+    If migration status is needed:
+    php artisan migrate:status
+
+    If a table already exists:
+    - Do not create a duplicate migration for that table.
+    - Check php artisan migrate:status first.
+    - Do not run php artisan migrate:fresh on a database containing work you need; it deletes all tables.
+
+    If the port 8010 server is not running:
+    cd C:\xampp\htdocs\auth-demo
+    php artisan serve --port=8010
+
+    If Blade cache needs clearing:
+    php artisan view:clear
+    php artisan optimize:clear
+
+    END OF PRACTICALS 1–8
+
+
+============================================================
+HOW TO USE THIS FILE: FULL CODE VS SINGLE-LINE ADDITIONS
+============================================================
+
+1. COMMANDS
+A command is typed into PowerShell/Terminal from the project root, where the artisan file exists.
+Example:
+cd C:\xampp\htdocs\auth-demo
+php artisan route:list
+
+2. FULL FILE REPLACEMENT
+When a section says "REPLACE THE ENTIRE FILE", open the named file in VS Code/Notepad, select all,
+paste the complete code, and save. Do not paste PHP code into PowerShell.
+
+3. ADD A SINGLE LINE OR METHOD
+When a section says "ADD THIS LINE" or "ADD THIS METHOD", do not erase the whole file.
+For a method, paste it INSIDE the existing class, before the class's final closing brace }.
+For an import, add it near the other use statements at the top.
+
+4. DATABASE MIGRATIONS
+Create a migration only once. Before making another, run:
+php artisan migrate:status
+Never run php artisan migrate:fresh on a database that contains work you need; it drops tables.
+
+5. ROUTES
+Add each route only once in routes/web.php. Keep use statements near the top, after <?php.
+Do not leave any characters or blank lines before <?php in PHP files.
+
+6. BLADE FILES
+Create each named .blade.php file in the exact folder given. Blade code goes in the file, not PowerShell.
+Use @extends('layouts.practical') for pages using the shared layout created in Practical 4.
+
+============================================================
+PRACTICAL 9: INSTALL WORDPRESS ON LOCAL XAMPP
+============================================================
+
+Aim:
+Install and configure WordPress locally.
+
+STATUS IN THIS SESSION:
+WordPress is installed and the user has reached the dashboard. The actual folder path is:
+C:\xampp\htdocs\my-site\wordpress\
+Dashboard/login URL:
+http://localhost/my-site/wordpress/wp-admin
+Site URL:
+http://localhost/my-site/wordpress/
+
+Steps:
+1. Open XAMPP Control Panel.
+2. Start Apache and MySQL.
+3. Open http://localhost/phpmyadmin
+4. Create database wordpress_db if it does not already exist.
+5. Download WordPress from https://wordpress.org/download/
+6. Extract it under C:\xampp\htdocs\my-site\wordpress\
+7. Open http://localhost/my-site/wordpress/
+8. If setup asks for database details:
+   Database: wordpress_db
+   Username: root
+   Password: blank for default XAMPP only
+   Host: localhost
+   Prefix: wp_
+9. Finish installation and log in at the dashboard.
+
+The user recovered the account using phpMyAdmin; the username shown in the session was Rajdeep_admin.
+Do not save real passwords in this file.
+
+============================================================
+PRACTICAL 10: CUSTOMIZE SITE TITLE, TAGLINE AND SITE ICON
+============================================================
+
+Aim:
+Change the WordPress site identity.
+
+Steps:
+1. Log in at http://localhost/my-site/wordpress/wp-admin
+2. Go to Settings > General.
+3. Site Title: My Lab Website
+4. Tagline: Learning WordPress Practically
+5. Click Save Changes.
+6. For the icon, open Appearance > Themes > Customize if available.
+7. Open Site Identity, select a square site icon image (minimum 512 x 512 pixels), then Publish.
+   If this theme does not expose a Site Identity option, title and tagline are enough for the basic task.
+
+Expected result:
+Site title and tagline are saved and displayed by the theme.
+
+============================================================
+PRACTICAL 11: CREATE AND PUBLISH A BLOG POST WITH CATEGORIES AND TAGS
+============================================================
+
+Aim:
+Create a post and organize it with a category and tags.
+
+Steps:
+1. In Dashboard, go to Posts > Categories.
+2. Add category Technology with slug technology.
+3. Add category Tutorial.
+4. Go to Posts > Add New.
+5. Title: Introduction to Open Source Software
+6. Add content, for example:
+   Open-source software allows users to study, use, modify, and share software.
+   Examples include Linux, WordPress, and Mozilla Firefox.
+7. In the editor's right settings panel, select category Technology.
+8. Add tags: opensource, linux, php, web. Press Enter after each tag.
+9. Click Publish, then confirm Publish if asked.
+10. Use View Post to verify the post.
+
+No code or terminal command is needed. This is performed entirely in the WordPress dashboard.
+
+============================================================
+PRACTICAL 12: ADD MEDIA TO A WORDPRESS POST
+============================================================
+
+Aim:
+Upload an image, set a featured image, and embed a video.
+
+Steps:
+1. Go to Media > Add New.
+2. Upload one or more JPG/PNG images.
+3. Go to Posts > Add New, or edit your Practical 11 post.
+4. Click the + block inserter and add an Image block.
+5. Choose Media Library and insert an uploaded image.
+6. In the post settings on the right, find Featured image > Set featured image.
+7. Select an image and click Set featured image.
+8. Add a YouTube or Vimeo block, or paste a public video URL on a blank line in the editor.
+9. Click Publish/Update.
+10. View the post and verify the image, featured image, and video are present.
+
+No PHP code or command line is required.
+
+============================================================
+PRACTICAL 13: CREATE AN IMAGE GALLERY
+============================================================
+
+Aim:
+Create and display a multi-column image gallery.
+
+Steps:
+1. Go to Media > Add New and upload 6-10 images.
+2. Go to Pages > Add New.
+3. Page title: Photo Gallery.
+4. Click + and search for Gallery.
+5. Insert the Gallery block.
+6. Choose Upload or Media Library.
+7. Select several images. Click Create a new gallery, then Insert gallery.
+8. In the block settings, choose 3 columns (or 2/4), and configure cropping/image size.
+9. Click Publish.
+10. View the page to confirm a multi-column gallery appears.
+
+No code or terminal command is required.
+
+============================================================
+PRACTICAL 14: INSTALL AND ACTIVATE A NEW THEME
+============================================================
+
+Aim:
+Install, activate, and customize a WordPress theme.
+
+Steps:
+1. Go to Appearance > Themes.
+2. Click Add New Theme.
+3. Search for a free theme, for example Astra, Neve, OceanWP, or Kadence.
+4. Click Install, then Activate.
+5. Visit the site frontend to inspect the changed appearance.
+6. If available, open Appearance > Customize and adjust colors, typography, header/footer or layout.
+7. Click Publish to save customizer changes.
+8. Optional: for Astra, install Starter Templates only if you want to import a starter design.
+
+If the theme has a block-based Site Editor instead of Customize, use Appearance > Editor for supported visual changes.
+No PHP code is required.
+
+============================================================
+PRACTICAL 15: CREATE WORDPRESS USERS WITH DIFFERENT ROLES
+============================================================
+
+Aim:
+Create accounts with Editor, Author, and Subscriber roles and compare permissions.
+
+Steps:
+1. Go to Users > Add New.
+2. Create user:
+   Username: editor_user
+   Email: editor@example.com
+   Role: Editor
+   Set a unique temporary password.
+3. Click Add New User.
+4. Repeat to create:
+   Username: author_user
+   Email: author@example.com
+   Role: Author
+5. Repeat to create:
+   Username: subscriber_user
+   Email: subscriber@example.com
+   Role: Subscriber
+6. Go to Users > All Users and verify the three accounts and roles.
+7. Optional role test: log out and log in as each account to observe access differences.
+8. Return to the Administrator account when finished.
+
+Role summary:
+Administrator: manages the whole site.
+Editor: manages and publishes posts/pages from users.
+Author: publishes and manages own posts.
+Contributor: writes and edits own posts but cannot publish.
+Subscriber: manages own profile and reads content.
+
+No PHP code is required. Use distinct passwords and do not record them in this file.
+
+============================================================
+PRACTICAL 16: FINAL LARAVEL PROJECT
+============================================================
+
+Aim:
+Build a complete Laravel project using authentication, database tables, relationships, CRUD and a clean interface.
+
+The lab manual allows one of these project ideas:
+- Student Result Management System
+- Library Book Management System
+- Online Quiz/MCQ Application
+- Event Registration Portal
+- Simple E-Commerce Product Catalog
+
+Suggested fast option:
+Reuse the existing Student Task Manager as a demo foundation, or create a new project only if your instructor requires a separate final project.
+
+Fresh project commands (only if a separate project is required):
+cd C:\xampp\htdocs
+composer create-project laravel/laravel my-project
+cd my-project
+composer require laravel/breeze --dev
+php artisan breeze:install blade
+npm.cmd install
+npm.cmd run build
+
+Database:
+1. Create a database in phpMyAdmin.
+2. Update .env with DB_CONNECTION=mysql, DB_HOST=127.0.0.1, DB_PORT=3306, DB_DATABASE=your_database_name, DB_USERNAME=root, DB_PASSWORD=.
+3. Run:
+php artisan config:clear
+php artisan migrate
+
+Generate resources (example: library books):
+php artisan make:model Book -m
+php artisan make:controller BookController --resource
+php artisan make:migration create_books_table
+NOTE: Do not run both make:model Book -m and make:migration create_books_table for the same table. The first command already creates the migration. Use one approach only.
+
+Example migration body (inside the generated migration's up() method):
+Schema::create('books', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+    $table->string('title');
+    $table->string('author');
+    $table->string('isbn')->nullable();
+    $table->timestamps();
+});
+
+After saving migration:
+php artisan migrate
+
+Example Book model: app/Models/Book.php
+REPLACE THE FILE with:
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Book extends Model
+{
+    protected $fillable = ['title', 'author', 'isbn', 'user_id'];
+}
+
+Example relationship (ADD THIS METHOD inside the existing User class):
+public function books()
+{
+    return $this->hasMany(Book::class);
+}
+
+Example resource route (ADD ONCE in routes/web.php):
+use App\Http\Controllers\BookController;
+Route::resource('books', BookController::class)->middleware('auth');
+
+Generate CRUD controller method skeleton:
+php artisan make:controller BookController --resource
+Implement index/create/store/show/edit/update/destroy methods as demonstrated in Practical 7 and Practical 8. Create Blade files under resources/views/books/.
+Then verify:
+php artisan route:list --path=books
+php artisan migrate:status
+php artisan optimize:clear
+php artisan serve --port=8011
+
+Open:
+http://127.0.0.1:8011/books
+
+Final checks:
+- Registration/login works.
+- Database tables exist.
+- Create, read, update, delete all work.
+- Routes are registered.
+- Views are readable.
+- Validate form inputs.
+- Do not call the project "deployed" unless it is actually hosted on a remote server. Running php artisan serve is local development.
+
+============================================================
+QUICK REFERENCE: WHICH PRACTICALS NEED CODE?
+============================================================
+
+Practical 1: Terminal commands; no application code.
+Practical 2: Terminal commands, .env settings; Breeze generates authentication code.
+Practical 3: Routes (short code blocks) and three Blade view files.
+Practical 4: One complete shared Blade layout file; other views use @extends and @section.
+Practical 5: One route block and one Blade view file.
+Practical 6: One migration file's schema; commands to generate/run migration.
+Practical 7: Model file, controller file, resource route line, four Blade view files.
+Practical 8: Migration schema, Task model, User relationship method, TaskController, resource route inside auth group, four Blade view files.
+Practical 9: WordPress UI installation, XAMPP and phpMyAdmin; no PHP code.
+Practical 10: WordPress Settings/Customizer UI; no PHP code.
+Practical 11: WordPress categories, post, tags; no PHP code.
+Practical 12: WordPress Media Library and editor; no PHP code.
+Practical 13: WordPress Gallery block; no PHP code.
+Practical 14: WordPress Themes screen; no PHP code.
+Practical 15: WordPress Users and Roles; no PHP code.
+Practical 16: Laravel final project: terminal commands plus migration/model/controller/routes/views.
+
+FINAL SAFETY REMINDERS
+- PHP source files must start with <?php as the first characters.
+- Do not paste PHP or Blade source into PowerShell.
+- Do not duplicate route definitions, migrations, or model class declarations.
+- Keep backups of project files and never expose passwords.
+- If an instruction in the lab manual differs from the existing project configuration, preserve the working project and ask before destructive changes.
