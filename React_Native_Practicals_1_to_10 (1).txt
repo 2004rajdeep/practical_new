@@ -1,0 +1,898 @@
+REACT NATIVE PRACTICALS 1-10 Complete Codes and Installation Commands
+Windows PowerShell | Expo | JavaScript | Project folder: D:
+
+IMPORTANT - Each practical is a separate program. Replace App.js with
+only the code for the practical you are testing. - Save App.js with
+Ctrl+S. Keep the Expo terminal open. - In PowerShell, use npm.cmd and
+npx.cmd if npm.ps1 is blocked. - Node.js download: https://nodejs.org -
+Install the Node.js LTS version, reopen PowerShell, then check: node
+–version npm.cmd –version npx.cmd –version
+
+PRACTICAL 1: INSTALLATION AND SETUP
+
+If Node.js is missing, install it from https://nodejs.org, then reopen
+PowerShell.
+
+Create the Expo project only if it does not already exist: cd D: npx.cmd
+create-expo-app@latest MyApp –template blank cd D:
+
+If the project already exists: cd D:
+
+Install browser support: npx.cmd expo install react-dom@19.2.3
+react-native-web@^0.21.2
+
+Run in browser: npx.cmd expo start –web
+
+PRACTICAL 2: BASIC COMPONENTS (TEXT, IMAGE, BUTTON)
+
+import React from ‘react’; import { View, Text, Image, Button,
+StyleSheet } from ‘react-native’;
+
+export default function App() { const showMessage = () => { if (typeof
+window !== ‘undefined’) window.alert(‘Button Pressed!’); };
+
+return ( Hello React Native <Image source={{ uri:
+‘https://reactnative.dev/img/tiny_logo.png’ }} style={styles.image} />
+); }
+
+const styles = StyleSheet.create({ container: { flex: 1, justifyContent:
+‘center’, alignItems: ‘center’, padding: 20 }, heading: { fontSize: 24,
+fontWeight: ‘bold’ }, image: { width: 100, height: 100, marginVertical:
+20 }, });
+
+PRACTICAL 3: UI DESIGN USING CORE COMPONENTS
+
+import React from ‘react’; import { Image, ScrollView, Text, View,
+StyleSheet } from ‘react-native’;
+
+const subjects = [‘React Native’, ‘JavaScript’, ‘Database Management’,
+‘Computer Networks’, ‘Python Programming’];
+
+export default function App() { return ( Welcome to React Native <Image
+source={{ uri: ‘https://reactnative.dev/img/tiny_logo.png’ }}
+style={styles.image} /> Student Name: Rajdeep Course: BCA Subjects
+{subjects.map((subject, index) => ( {index + 1}. {subject} ))} ); }
+
+const styles = StyleSheet.create({ container: { padding: 24, alignItems:
+‘center’, backgroundColor: ‘#f1f5f9’ }, heading: { fontSize: 25,
+fontWeight: ‘bold’, marginTop: 30, marginBottom: 20, textAlign: ‘center’
+}, image: { width: 100, height: 100, marginBottom: 20 }, card: { width:
+‘100%’, padding: 18, backgroundColor: ‘#fff’, borderRadius: 10,
+marginBottom: 20 }, text: { fontSize: 17, marginBottom: 8 }, subheading:
+{ fontSize: 21, fontWeight: ‘bold’, alignSelf: ‘flex-start’,
+marginBottom: 10 }, subjectCard: { width: ‘100%’, padding: 14,
+backgroundColor: ‘#dbeafe’, borderRadius: 8, marginBottom: 8 }, });
+
+PRACTICAL 4: STYLING USING STYLESHEET AND FLEXBOX
+
+import React from ‘react’; import { StyleSheet, Text, View } from
+‘react-native’;
+
+export default function App() { return ( <View style={[styles.box, {
+backgroundColor: ‘#2563eb’ }]}>Box 1 <View style={[styles.box, {
+backgroundColor: ‘#16a34a’ }]}>Box 2 <View style={[styles.box, {
+backgroundColor: ‘#ea580c’ }]}>Box 3 Flexbox Layout flexDirection: row
+justifyContent: space-around alignItems: center ); }
+
+const styles = StyleSheet.create({ container: { flex: 1, flexDirection:
+‘row’, justifyContent: ‘space-around’, alignItems: ‘center’, flexWrap:
+‘wrap’, padding: 16, backgroundColor: ‘#f1f5f9’ }, box: { width: 90,
+height: 90, justifyContent: ‘center’, alignItems: ‘center’,
+borderRadius: 10 }, text: { color: ‘#fff’, fontWeight: ‘bold’ },
+infoCard: { width: ‘100%’, padding: 18, backgroundColor: ‘#fff’,
+borderRadius: 10, marginTop: 20 }, infoTitle: { fontSize: 20,
+fontWeight: ‘bold’, marginBottom: 8 }, });
+
+PRACTICAL 5: USER INPUT FORM CREATION
+
+import React, { useState } from ‘react’; import { View, Text, TextInput,
+Button, StyleSheet } from ‘react-native’;
+
+export default function App() { const [name, setName] = useState(’‘);
+const [email, setEmail] = useState(’‘); const [mobile, setMobile] =
+useState(’’);
+
+const handleSubmit = () => { if (!name.trim() || !email.trim() ||
+!mobile.trim()) { window.alert(‘Please fill in all fields.’); return; }
+window.alert(‘Form submitted successfully!:’ + name + ‘:’ + email +
+‘:’ + mobile); };
+
+return ( User Input Form ); }
+
+const styles = StyleSheet.create({ container: { flex: 1, justifyContent:
+‘center’, padding: 24, backgroundColor: ‘#f8fafc’ }, heading: {
+fontSize: 26, fontWeight: ‘bold’, textAlign: ‘center’, marginBottom: 25
+}, input: { height: 50, borderWidth: 1, borderColor: ‘#cbd5e1’,
+borderRadius: 8, paddingHorizontal: 14, marginBottom: 16,
+backgroundColor: ‘#fff’ }, });
+
+NOTE: This version uses window.alert() for browser testing. On native
+Android, Alert.alert() can be used instead.
+
+PRACTICAL 6: PROPS AND STATE IN FUNCTIONAL COMPONENTS
+
+import React, { useState } from ‘react’; import { View, Text, Button,
+StyleSheet } from ‘react-native’;
+
+function Child({ message, studentName }) { return ( Child Component
+{message} Student: {studentName} ); }
+
+export default function App() { const [message, setMessage] =
+useState(‘Hello from the Parent Component’); return ( Props and State
+Example <Button title=“Change Message” onPress={() => setMessage(‘The
+parent state has been updated!’)} /> ); }
+
+const styles = StyleSheet.create({ container: { flex: 1, padding: 24,
+justifyContent: ‘center’, backgroundColor: ‘#f1f5f9’ }, heading: {
+fontSize: 27, fontWeight: ‘bold’, textAlign: ‘center’, marginBottom: 25
+}, childContainer: { padding: 22, marginBottom: 20, backgroundColor:
+‘#fff’, borderRadius: 12, elevation: 3 }, childHeading: { fontSize: 20,
+fontWeight: ‘bold’, marginBottom: 12 }, message: { fontSize: 17,
+marginBottom: 10 }, student: { fontSize: 16, fontWeight: ‘600’ }, });
+
+PRACTICAL 7: COUNTER APP USING STATE
+
+import React, { useState } from ‘react’; import { View, Text, Pressable,
+StyleSheet } from ‘react-native’;
+
+export default function App() { const [count, setCount] = useState(0);
+return ( Counter App {count} <Pressable style={styles.button}
+onPress={() => setCount(count + 1)}>Increase <Pressable
+style={styles.button} onPress={() => setCount(Math.max(0, count -
+1))}>Decrease <Pressable style={[styles.button, styles.resetButton]}
+onPress={() => setCount(0)}>Reset ); }
+
+const styles = StyleSheet.create({ container: { flex: 1, justifyContent:
+‘center’, alignItems: ‘center’, padding: 24, backgroundColor: ‘#f1f5f9’
+}, heading: { fontSize: 30, fontWeight: ‘bold’, marginBottom: 25 },
+count: { fontSize: 60, fontWeight: ‘bold’, marginBottom: 25 }, button: {
+width: 180, padding: 14, borderRadius: 8, backgroundColor: ‘#2563eb’,
+alignItems: ‘center’, marginBottom: 12 }, resetButton: {
+backgroundColor: ‘#dc2626’ }, buttonText: { color: ‘#fff’, fontSize: 17,
+fontWeight: ‘bold’ }, });
+
+PRACTICAL 8: STACK NAVIGATION
+
+Install packages from PowerShell in D:: npm.cmd install
+@react-navigation/native npm.cmd install @react-navigation/native-stack
+npx.cmd expo install react-native-screens react-native-safe-area-context
+
+import React from ‘react’; import { View, Text, Button, StyleSheet }
+from ‘react-native’; import { NavigationContainer } from
+‘@react-navigation/native’; import { createNativeStackNavigator } from
+‘@react-navigation/native-stack’;
+
+const Stack = createNativeStackNavigator();
+
+function HomeScreen({ navigation }) { return ( Home Screen Welcome to my
+React Native application! <Button title=“Go to About” onPress={() =>
+navigation.navigate(‘About’)} /> <Button title=“Go to Profile”
+onPress={() => navigation.navigate(‘Profile’)} /> ); }
+
+function AboutScreen({ navigation }) { return ( About Screen This app
+demonstrates stack navigation. <Button title=“Go to Profile” onPress={()
+=> navigation.navigate(‘Profile’)} /> ); }
+
+function ProfileScreen() { return ( Profile Screen Welcome to your
+profile! ); }
+
+export default function App() { return ( <Stack.Navigator> <Stack.Screen
+name=“Home” component={HomeScreen} /> <Stack.Screen name=“About”
+component={AboutScreen} /> <Stack.Screen name=“Profile”
+component={ProfileScreen} /> </Stack.Navigator> ); }
+
+const styles = StyleSheet.create({ container: { flex: 1, justifyContent:
+‘center’, alignItems: ‘center’, padding: 25, backgroundColor: ‘#f1f5f9’
+}, heading: { fontSize: 28, fontWeight: ‘bold’, marginBottom: 15 },
+description: { fontSize: 16, textAlign: ‘center’, marginBottom: 25 },
+button: { marginBottom: 15, width: 180 }, });
+
+PRACTICAL 9: BOTTOM TAB NAVIGATION
+
+Install (Practical 8 packages must already be installed): npm.cmd
+install @react-navigation/bottom-tabs
+
+import React from ‘react’; import { View, Text, StyleSheet } from
+‘react-native’; import { NavigationContainer } from
+‘@react-navigation/native’; import { createBottomTabNavigator } from
+‘@react-navigation/bottom-tabs’;
+
+const Tab = createBottomTabNavigator();
+
+function HomeScreen() { return 🏠Home ScreenWelcome to the home
+section.; } function ProfileScreen() { return 👤Profile ScreenThis
+section displays user information.; } function SettingsScreen() { return
+⚙️Settings ScreenManage application settings here.; }
+
+export default function App() { return ( <Tab.Navigator screenOptions={{
+headerTitleAlign: ‘center’, tabBarLabelStyle: { fontSize: 13 },
+tabBarStyle: { height: 65, paddingBottom: 8 } }}> <Tab.Screen
+name=“Home” component={HomeScreen} /> <Tab.Screen name=“Profile”
+component={ProfileScreen} /> <Tab.Screen name=“Settings”
+component={SettingsScreen} /> </Tab.Navigator> ); }
+
+const styles = StyleSheet.create({ container: { flex: 1, padding: 25,
+justifyContent: ‘center’, alignItems: ‘center’, backgroundColor:
+‘#f8fafc’ }, icon: { fontSize: 55, marginBottom: 15 }, heading: {
+fontSize: 27, fontWeight: ‘bold’, marginBottom: 10 }, description: {
+fontSize: 16, textAlign: ‘center’ }, });
+
+PRACTICAL 10: PASSING DATA BETWEEN SCREENS
+
+Install if needed (same packages as Practical 8): npm.cmd install
+@react-navigation/native npm.cmd install @react-navigation/native-stack
+npx.cmd expo install react-native-screens react-native-safe-area-context
+
+import React, { useState } from ‘react’; import { View, Text, TextInput,
+Button, StyleSheet } from ‘react-native’; import { NavigationContainer }
+from ‘@react-navigation/native’; import { createNativeStackNavigator }
+from ‘@react-navigation/native-stack’;
+
+const Stack = createNativeStackNavigator();
+
+function HomeScreen({ navigation }) { const [name, setName] =
+useState(’‘); const [course, setCourse] = useState(’’);
+
+const openDetails = () => { navigation.navigate(‘Details’, {
+studentName: name || ‘Not provided’, courseName: course || ‘Not
+provided’, }); };
+
+return ( Enter Student Details ); }
+
+function DetailsScreen({ route }) { const { studentName, courseName } =
+route.params; return ( Student Information Student Name {studentName}
+Course {courseName} ); }
+
+export default function App() { return ( <Stack.Navigator> <Stack.Screen
+name=“Home” component={HomeScreen} options={{ title: ‘Student Form’ }}
+/> <Stack.Screen name=“Details” component={DetailsScreen} options={{
+title: ‘Student Details’ }} /> </Stack.Navigator> ); }
+
+const styles = StyleSheet.create({ container: { flex: 1, padding: 25,
+justifyContent: ‘center’, backgroundColor: ‘#f8fafc’ }, heading: {
+fontSize: 27, fontWeight: ‘bold’, textAlign: ‘center’, marginBottom: 25
+}, input: { height: 50, paddingHorizontal: 14, marginBottom: 16,
+backgroundColor: ‘#fff’, borderWidth: 1, borderColor: ‘#cbd5e1’,
+borderRadius: 8 }, card: { padding: 22, backgroundColor: ‘#fff’,
+borderRadius: 12, elevation: 3 }, label: { fontSize: 15, fontWeight:
+‘bold’, marginBottom: 5 }, value: { fontSize: 18, marginBottom: 20 },
+});
+
+QUICK REFERENCE: ALL INSTALL COMMANDS
+
+Check software: node –version npm.cmd –version npx.cmd –version
+
+Create project (only once): cd D: npx.cmd create-expo-app@latest MyApp
+–template blank cd D:
+
+Browser support: npx.cmd expo install react-dom@19.2.3
+react-native-web@^0.21.2
+
+Stack navigation and data passing: npm.cmd install
+@react-navigation/native npm.cmd install @react-navigation/native-stack
+npx.cmd expo install react-native-screens react-native-safe-area-context
+
+Bottom tabs: npm.cmd install @react-navigation/bottom-tabs
+
+Start the app: cd D: npx.cmd expo start –web
+
+Keep the terminal open while testing. Replace App.js with one practical
+at a time. Do not run npm audit fix –force as a routine fix. END OF FILE
+
+
+======================================================================
+PRACTICAL 11: GLOBAL STATE USING CONTEXT API
+======================================================================
+
+Aim:
+Share a user name between components without passing props through every level.
+No extra package is required.
+
+Code for App.js:
+
+import React, { createContext, useContext, useState } from 'react';
+import {
+  View, Text, TextInput, Pressable, StyleSheet
+} from 'react-native';
+
+const UserContext = createContext(null);
+
+function Profile() {
+  const { user, updateUser } = useContext(UserContext);
+  const [newName, setNewName] = useState('');
+
+  const handleUpdate = () => {
+    if (newName.trim()) {
+      updateUser(newName.trim());
+      setNewName('');
+    }
+  };
+
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardHeading}>Profile Component</Text>
+      <Text style={styles.welcomeText}>Welcome, {user}</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Enter a new name"
+        value={newName}
+        onChangeText={setNewName}
+      />
+      <Pressable style={styles.button} onPress={handleUpdate}>
+        <Text style={styles.buttonText}>Update Global User</Text>
+      </Pressable>
+    </View>
+  );
+}
+
+function Dashboard() {
+  const { user } = useContext(UserContext);
+
+  return (
+    <View style={styles.card}>
+      <Text style={styles.cardHeading}>Dashboard Component</Text>
+      <Text style={styles.welcomeText}>
+        Current logged-in user: {user}
+      </Text>
+    </View>
+  );
+}
+
+export default function App() {
+  const [user, setUser] = useState('John');
+  const updateUser = (name) => setUser(name);
+
+  return (
+    <UserContext.Provider value={{ user, updateUser }}>
+      <View style={styles.container}>
+        <Text style={styles.heading}>Context API Example</Text>
+        <Profile />
+        <Dashboard />
+      </View>
+    </UserContext.Provider>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, paddingTop: 60, backgroundColor: '#f1f5f9' },
+  heading: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 25 },
+  card: { padding: 20, marginBottom: 18, backgroundColor: '#fff', borderRadius: 12, elevation: 3 },
+  cardHeading: { fontSize: 20, fontWeight: 'bold', marginBottom: 12 },
+  welcomeText: { fontSize: 17, marginBottom: 15 },
+  input: { height: 48, paddingHorizontal: 12, marginBottom: 14, borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 8 },
+  button: { padding: 13, alignItems: 'center', backgroundColor: '#2563eb', borderRadius: 8 },
+  buttonText: { fontSize: 15, fontWeight: 'bold', color: '#fff' },
+});
+
+======================================================================
+PRACTICAL 12: API INTEGRATION USING FETCH
+======================================================================
+
+Aim:
+Fetch posts from an API and display them using FlatList.
+No extra package is required. An internet connection is required.
+
+Code for App.js:
+
+import React, { useEffect, useState } from 'react';
+import {
+  View, Text, FlatList, ActivityIndicator, Pressable, StyleSheet
+} from 'react-native';
+
+const API_URL = 'https://jsonplaceholder.typicode.com/posts';
+
+export default function App() {
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const fetchPosts = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      const response = await fetch(API_URL);
+      if (!response.ok) {
+        throw new Error(`Server returned status ${response.status}`);
+      }
+      const data = await response.json();
+      setPosts(data.slice(0, 15));
+    } catch (fetchError) {
+      setError(fetchError.message || 'Unable to load the posts.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" />
+        <Text style={styles.loadingText}>Loading posts...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorHeading}>Unable to Load Data</Text>
+        <Text style={styles.errorText}>{error}</Text>
+        <Pressable style={styles.reloadButton} onPress={fetchPosts}>
+          <Text style={styles.reloadButtonText}>Try Again</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.heading}>API Posts</Text>
+      <FlatList
+        data={posts}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <View style={styles.card}>
+            <Text style={styles.postNumber}>Post #{item.id}</Text>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.body}>{item.body}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, paddingHorizontal: 18, paddingTop: 55, backgroundColor: '#f1f5f9' },
+  centerContainer: { flex: 1, padding: 25, justifyContent: 'center', alignItems: 'center' },
+  heading: { fontSize: 28, fontWeight: 'bold', marginBottom: 18 },
+  loadingText: { fontSize: 16, marginTop: 14 },
+  card: { padding: 18, marginBottom: 14, backgroundColor: '#fff', borderRadius: 12, elevation: 2 },
+  postNumber: { fontSize: 13, fontWeight: 'bold', marginBottom: 7 },
+  title: { fontSize: 18, fontWeight: 'bold', textTransform: 'capitalize', marginBottom: 8 },
+  body: { fontSize: 15, lineHeight: 22 },
+  errorHeading: { fontSize: 24, fontWeight: 'bold', marginBottom: 12 },
+  errorText: { fontSize: 16, textAlign: 'center', marginBottom: 20 },
+  reloadButton: { paddingVertical: 13, paddingHorizontal: 25, backgroundColor: '#2563eb', borderRadius: 8 },
+  reloadButtonText: { fontWeight: 'bold', color: '#fff' },
+});
+
+======================================================================
+PRACTICAL 13: FORM VALIDATION USING FORMIK AND YUP
+======================================================================
+
+Installation commands (run in D:\CPD\MyApp):
+
+cd D:\CPD\MyApp
+npm.cmd install formik yup
+
+Code for App.js:
+
+import React from 'react';
+import {
+  View, Text, TextInput, Pressable, StyleSheet,
+  KeyboardAvoidingView, Platform
+} from 'react-native';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+
+const validationSchema = Yup.object({
+  name: Yup.string().trim().min(3, 'Name must contain at least 3 characters.').required('Name is required.'),
+  email: Yup.string().trim().email('Enter a valid email address.').required('Email is required.'),
+  password: Yup.string().min(6, 'Password must contain at least 6 characters.').required('Password is required.'),
+});
+
+export default function App() {
+  const submitForm = (values, { resetForm }) => {
+    const message = `Registration Successful\nName: ${values.name}\nEmail: ${values.email}`;
+    if (typeof window !== 'undefined') window.alert(message);
+    resetForm();
+  };
+
+  return (
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <Formik
+        initialValues={{ name: '', email: '', password: '' }}
+        validationSchema={validationSchema}
+        onSubmit={submitForm}
+      >
+        {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isValid }) => (
+          <View style={styles.form}>
+            <Text style={styles.heading}>Create Account</Text>
+
+            <Text style={styles.label}>Name</Text>
+            <TextInput
+              style={[styles.input, touched.name && errors.name ? styles.invalidInput : null]}
+              placeholder="Enter your name"
+              value={values.name}
+              onChangeText={handleChange('name')}
+              onBlur={handleBlur('name')}
+            />
+            {touched.name && errors.name ? <Text style={styles.errorText}>{errors.name}</Text> : null}
+
+            <Text style={styles.label}>Email</Text>
+            <TextInput
+              style={[styles.input, touched.email && errors.email ? styles.invalidInput : null]}
+              placeholder="Enter your email"
+              value={values.email}
+              onChangeText={handleChange('email')}
+              onBlur={handleBlur('email')}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            {touched.email && errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
+
+            <Text style={styles.label}>Password</Text>
+            <TextInput
+              style={[styles.input, touched.password && errors.password ? styles.invalidInput : null]}
+              placeholder="Enter your password"
+              value={values.password}
+              onChangeText={handleChange('password')}
+              onBlur={handleBlur('password')}
+              secureTextEntry
+            />
+            {touched.password && errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
+
+            <Pressable style={[styles.button, !isValid ? styles.disabledButton : null]} onPress={handleSubmit}>
+              <Text style={styles.buttonText}>Register</Text>
+            </Pressable>
+          </View>
+        )}
+      </Formik>
+    </KeyboardAvoidingView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, justifyContent: 'center', backgroundColor: '#eef2f7' },
+  form: { padding: 22, backgroundColor: '#fff', borderRadius: 14, elevation: 4 },
+  heading: { fontSize: 26, fontWeight: 'bold', textAlign: 'center', marginBottom: 24 },
+  label: { fontSize: 15, fontWeight: '600', marginBottom: 6 },
+  input: { height: 48, paddingHorizontal: 13, borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 8, marginBottom: 8 },
+  invalidInput: { borderColor: '#dc2626' },
+  errorText: { marginBottom: 12, fontSize: 13, color: '#dc2626' },
+  button: { paddingVertical: 14, marginTop: 20, alignItems: 'center', backgroundColor: '#2563eb', borderRadius: 8 },
+  disabledButton: { opacity: 0.6 },
+  buttonText: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
+});
+
+======================================================================
+PRACTICAL 14: FIREBASE EMAIL AND PASSWORD AUTHENTICATION
+======================================================================
+
+Installation command:
+
+cd D:\CPD\MyApp
+npx.cmd expo install firebase
+
+IMPORTANT:
+This practical requires a Firebase project and configuration. Create a project at
+https://console.firebase.google.com, add a Web App, and enable Authentication >
+Sign-in method > Email/Password. Copy the configuration values into firebaseConfig.js.
+Never share private credentials. Firebase web configuration is not a service-account
+private key, but keep account access and server secrets private.
+
+Create a file named firebaseConfig.js in the project root:
+
+import { getApp, getApps, initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+
+const firebaseConfig = {
+  apiKey: 'YOUR_API_KEY',
+  authDomain: 'YOUR_PROJECT.firebaseapp.com',
+  projectId: 'YOUR_PROJECT_ID',
+  storageBucket: 'YOUR_PROJECT.appspot.com',
+  messagingSenderId: 'YOUR_SENDER_ID',
+  appId: 'YOUR_APP_ID',
+};
+
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+export const auth = getAuth(app);
+
+Replace the placeholder values with the configuration from your Firebase project.
+
+Code for App.js:
+
+import React, { useEffect, useState } from 'react';
+import {
+  View, Text, TextInput, Pressable, ActivityIndicator, StyleSheet
+} from 'react-native';
+import {
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut,
+} from 'firebase/auth';
+import { auth } from './firebaseConfig';
+
+export default function App() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState(null);
+  const [screenLoading, setScreenLoading] = useState(true);
+  const [buttonLoading, setButtonLoading] = useState(false);
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+      setScreenLoading(false);
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleAuthentication = async () => {
+    setMessage('');
+    if (!email.trim()) {
+      setMessage('Email is required.');
+      return;
+    }
+    if (password.length < 6) {
+      setMessage('Password must contain at least 6 characters.');
+      return;
+    }
+    try {
+      setButtonLoading(true);
+      if (isRegisterMode) {
+        await createUserWithEmailAndPassword(auth, email.trim(), password);
+        setMessage('Account created successfully.');
+      } else {
+        await signInWithEmailAndPassword(auth, email.trim(), password);
+      }
+      setEmail('');
+      setPassword('');
+    } catch (error) {
+      setMessage(error.message || 'Authentication failed.');
+    } finally {
+      setButtonLoading(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      setMessage(error.message || 'Logout failed.');
+    }
+  };
+
+  if (screenLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" />
+        <Text>Checking authentication...</Text>
+      </View>
+    );
+  }
+
+  if (user) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.heading}>Welcome</Text>
+        <Text style={styles.userEmail}>{user.email}</Text>
+        <Pressable style={styles.button} onPress={handleLogout}>
+          <Text style={styles.buttonText}>Logout</Text>
+        </Pressable>
+        {message ? <Text>{message}</Text> : null}
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.form}>
+        <Text style={styles.heading}>{isRegisterMode ? 'Create Account' : 'Login'}</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter email"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Enter password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        {message ? <Text style={styles.message}>{message}</Text> : null}
+        <Pressable style={styles.button} onPress={handleAuthentication} disabled={buttonLoading}>
+          {buttonLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>{isRegisterMode ? 'Register' : 'Login'}</Text>}
+        </Pressable>
+        <Pressable style={styles.switchButton} onPress={() => setIsRegisterMode((previous) => !previous)}>
+          <Text style={styles.switchText}>
+            {isRegisterMode ? 'Already have an account? Login' : 'New user? Create an account'}
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, justifyContent: 'center', backgroundColor: '#eef2f7' },
+  centerContainer: { flex: 1, padding: 25, justifyContent: 'center', alignItems: 'center' },
+  form: { padding: 22, backgroundColor: '#fff', borderRadius: 14, elevation: 4, width: '100%' },
+  heading: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 25 },
+  input: { height: 50, paddingHorizontal: 14, marginBottom: 16, borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 8 },
+  button: { padding: 14, alignItems: 'center', backgroundColor: '#2563eb', borderRadius: 8, marginTop: 10 },
+  buttonText: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
+  switchButton: { padding: 15, alignItems: 'center' },
+  switchText: { fontSize: 15, fontWeight: '600', color: '#2563eb' },
+  userEmail: { fontSize: 18 },
+  message: { marginBottom: 8, color: '#dc2626' },
+});
+
+======================================================================
+PRACTICAL 15: ASYNCSTORAGE FOR LOCAL STORAGE
+======================================================================
+
+Installation command (Expo):
+
+cd D:\CPD\MyApp
+npx.cmd expo install @react-native-async-storage/async-storage
+
+Code for App.js:
+
+import React, { useEffect, useState } from 'react';
+import {
+  View, Text, TextInput, Pressable, StyleSheet
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const PROFILE_KEY = 'studentProfile';
+
+export default function App() {
+  const [name, setName] = useState('');
+  const [savedName, setSavedName] = useState('');
+  const [message, setMessage] = useState('');
+
+  const loadProfile = async () => {
+    try {
+      const storedValue = await AsyncStorage.getItem(PROFILE_KEY);
+      if (storedValue) {
+        const profile = JSON.parse(storedValue);
+        setSavedName(profile.name);
+      } else {
+        setSavedName('');
+      }
+    } catch (error) {
+      setMessage('Unable to load the profile.');
+    }
+  };
+
+  const saveProfile = async () => {
+    if (!name.trim()) {
+      setMessage('Please enter a name.');
+      return;
+    }
+    try {
+      const profile = { name: name.trim(), savedAt: new Date().toISOString() };
+      await AsyncStorage.setItem(PROFILE_KEY, JSON.stringify(profile));
+      setSavedName(profile.name);
+      setName('');
+      setMessage('Profile saved locally.');
+    } catch (error) {
+      setMessage('Unable to save the profile.');
+    }
+  };
+
+  const removeProfile = async () => {
+    try {
+      await AsyncStorage.removeItem(PROFILE_KEY);
+      setSavedName('');
+      setMessage('Saved profile removed.');
+    } catch (error) {
+      setMessage('Unable to remove the profile.');
+    }
+  };
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.heading}>AsyncStorage Example</Text>
+      <View style={styles.card}>
+        <Text style={styles.label}>Enter Student Name</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Enter name"
+          value={name}
+          onChangeText={setName}
+        />
+        <Pressable style={styles.saveButton} onPress={saveProfile}>
+          <Text style={styles.buttonText}>Save Name</Text>
+        </Pressable>
+        <Pressable style={styles.loadButton} onPress={loadProfile}>
+          <Text style={styles.buttonText}>Load Saved Name</Text>
+        </Pressable>
+        <Pressable style={styles.removeButton} onPress={removeProfile}>
+          <Text style={styles.buttonText}>Remove Saved Name</Text>
+        </Pressable>
+      </View>
+      {message ? <Text style={styles.message}>{message}</Text> : null}
+      <View style={styles.resultCard}>
+        <Text style={styles.resultLabel}>Saved Name</Text>
+        <Text style={styles.resultValue}>{savedName || 'No name is currently saved.'}</Text>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, padding: 20, paddingTop: 60, backgroundColor: '#f1f5f9' },
+  heading: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 25 },
+  card: { padding: 20, backgroundColor: '#fff', borderRadius: 12, elevation: 3 },
+  label: { fontSize: 16, fontWeight: '600', marginBottom: 8 },
+  input: { height: 50, paddingHorizontal: 14, marginBottom: 18, borderWidth: 1, borderColor: '#cbd5e1', borderRadius: 8 },
+  saveButton: { padding: 14, marginBottom: 12, alignItems: 'center', backgroundColor: '#16a34a', borderRadius: 8 },
+  loadButton: { padding: 14, marginBottom: 12, alignItems: 'center', backgroundColor: '#2563eb', borderRadius: 8 },
+  removeButton: { padding: 14, alignItems: 'center', backgroundColor: '#dc2626', borderRadius: 8 },
+  buttonText: { fontSize: 15, fontWeight: 'bold', color: '#fff' },
+  resultCard: { padding: 20, marginTop: 20, backgroundColor: '#fff', borderRadius: 12 },
+  resultLabel: { fontSize: 15, fontWeight: 'bold', marginBottom: 8 },
+  resultValue: { fontSize: 19 },
+  message: { marginTop: 12, textAlign: 'center' },
+});
+
+NOTES FOR PRACTICALS 11-15
+- Practical 11: Context API needs no extra package.
+- Practical 12: Fetch uses the built-in fetch API; internet is required.
+- Practical 13: Install Formik and Yup using the commands above.
+- Practical 14: Firebase requires a Firebase project and your own configuration file.
+- Practical 15: AsyncStorage persists simple local values. Do not store passwords or other sensitive secrets in it.
+
+======================================================================
+UPDATED QUICK INSTALL COMMANDS
+======================================================================
+
+Check Node.js/npm:
+  node --version
+  npm.cmd --version
+  npx.cmd --version
+
+Create project only if it does not exist:
+  cd D:\CPD
+  npx.cmd create-expo-app@latest MyApp --template blank
+  cd D:\CPD\MyApp
+
+Browser support:
+  npx.cmd expo install react-dom@19.2.3 react-native-web@^0.21.2
+
+Stack navigation:
+  npm.cmd install @react-navigation/native
+  npm.cmd install @react-navigation/native-stack
+  npx.cmd expo install react-native-screens react-native-safe-area-context
+
+Bottom tabs:
+  npm.cmd install @react-navigation/bottom-tabs
+
+Formik validation:
+  npm.cmd install formik yup
+
+Firebase:
+  npx.cmd expo install firebase
+
+AsyncStorage:
+  npx.cmd expo install @react-native-async-storage/async-storage
+
+Start app in browser:
+  cd D:\CPD\MyApp
+  npx.cmd expo start --web
+
+Each practical is a separate App.js program. Replace the old code with one practical at a time.
+Avoid npm audit fix --force unless you have reviewed the changes.
+END OF UPDATED FILE
